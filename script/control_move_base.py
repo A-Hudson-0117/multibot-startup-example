@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
+# ---- Object being demoed ---- #
 from bot_container.multirobot_class_control_sample import bot_container
+
+# ---- basic imports ---- #
 import rospy
 import random
 
+# ---- Messages ---- #
 from geometry_msgs.msg import PoseStamped, Point
 from move_base_msgs.msg import MoveBaseActionResult
 
@@ -11,6 +15,10 @@ from move_base_msgs.msg import MoveBaseActionResult
 
 class multipoint_example():
     def __init__(self) -> None:
+        """
+        Generates and initializes each robot so that it can be utilized with the go_to_pts_in_list function.
+        """
+        
         rospy.init_node("control_move_base", log_level=rospy.DEBUG)    
         self.bot_list = list()
 
@@ -64,12 +72,14 @@ class multipoint_example():
         Args:
             list_of_pts (list): a list of all points for the robots to go to (Point need to be a ROS Point)
         """
-        # While more pts in list
+        # While there is more pts to go to
         while (len(list_of_pts) > 0) and not rospy.is_shutdown() :
             rospy.logdebug("Accessing all bots...")
             
             for bot in self.bot_list:
-                robot = assert_bot(bot)
+                # Ensures each bot is correct object. 
+                # It shouldn't be possible so desired result is crashing in that case.
+                robot = assert_bot_control(bot)
                 
                 # if  robot is doing nothing  then
                 if not robot.action_being_done:
@@ -82,16 +92,18 @@ class multipoint_example():
                     goal_msg = self.gen_goal_msg(goal_pt)
                     
                     robot.publish_goal(goal_msg)
+            
+            
             rospy.sleep(0.5)
 
 
     def return_home(self):
-        """sends robots back to their starting positions"""
+        """Sends robots back to their starting positions"""
         
         rospy.loginfo("Starting return home")
         
         for bot in self.bot_list:
-            robot = assert_bot(bot)
+            robot = assert_bot_control(bot)
             
             goal = self.gen_goal_msg(robot.init_position)
             
@@ -103,9 +115,12 @@ class multipoint_example():
                             
 
 
-def assert_bot(obj) -> bot_container:
-    """this is a wrapper that acts as typecasting to bot_container
-
+def assert_bot_control(obj) -> bot_container:
+    """
+    This is a wrapper that acts similarly to typecasting to bot_container.
+    It functionally does nothing and is unnecessary to code operation. 
+    It is useful for type hinting and auto-suggestion with a good IDE.  
+    
     Args:
         obj : an object
 
