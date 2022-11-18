@@ -1,5 +1,5 @@
 # multibot-startup-example
-Utiliziing ROS, Gazebo, and Turtlebot3 demonstrate how the multibot startup works. The startup sample script is imported as a submodule. 
+Utiliziing ROS, Gazebo, and Turtlebot3 demonstrate how the multibot startup works. The startup sample script is imported as a submodule from ```https://github.com/terminator0117/multibot-paramater-startup```  
 
 ## Setup
 Clone or download repository into catkin_ws (or youre own preferred workspace).
