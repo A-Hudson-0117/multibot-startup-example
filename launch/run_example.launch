@@ -1,0 +1,5 @@
+<launch>
+    
+    <node pkg="multibot_move_control" type="control_move_base.py" name="control_move_base" />
+
+</launch>

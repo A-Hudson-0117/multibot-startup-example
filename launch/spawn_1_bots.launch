@@ -1,0 +1,69 @@
+<launch>
+  
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="open_rviz" default="true" />
+  <param name="num_bots" value="1" />
+
+  <arg name="bot_1" default="robot_0"/>
+
+  <arg name="1_x_pos" default="2.9"/>
+  <arg name="1_y_pos" default="-4.3"/>
+  <arg name="1_z_pos" default="0.0"/>
+  <arg name="1_yaw"   default="-70"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find multibot_move_control)/worlds/example_movement.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="false"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+
+
+  <group ns = "$(arg bot_1)">
+    <param name="robot_description" command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+    <param name="tf_prefix" value="$(arg bot_1)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
+
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model $(arg bot_1) -x $(arg 1_x_pos) -y $(arg 1_y_pos) -z $(arg 1_z_pos) -Y $(arg 1_yaw) -param robot_description" />
+
+    <group ns="map_merge">
+      <param name="init_pose_x"   value="0" />
+      <param name="init_pose_y"   value="0" />
+      <param name="init_pose_z"   value="0" />
+      <param name="init_pose_yaw" value="0" />
+    </group> 
+
+    <include file="$(find turtlebot3_slam)/launch/turtlebot3_gmapping.launch" >
+      <arg name="set_base_frame" default="$(arg bot_1)/base_footprint" />
+      <arg name="set_odom_frame" default="$(arg bot_1)/odom" />
+      <arg name="set_map_frame"  default="$(arg bot_1)/map" />
+    </include>
+  </group>
+
+
+<!-- rviz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find multibot_move_control)/rviz/spawn_3_move_base_bots.rviz"/>
+  </group>
+
+
+  <node pkg="multirobot_map_merge" type="map_merge" respawn="false" name="map_merge" output="screen">
+    <param name="robot_map_topic" value="map"/>
+    <param name="robot_namespace" value="robot"/>
+    <param name="merged_map_topic" value="map"/>
+    <param name="world_frame" value="map"/>
+    <param name="known_init_poses" value="true"/>
+    <param name="merging_rate" value="0.5"/>
+    <param name="discovery_rate" value="0.05"/>
+    <param name="estimation_rate" value="0.1"/>
+    <param name="estimation_confidence" value="0.99"/>
+  </node>
+
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg bot_1)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg bot_1)/map 100"/>
+
+</launch>

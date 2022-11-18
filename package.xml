@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>multibot_move_control</name>
+  <version>1.0.0</version>
+  <description>
+  example demonstating how to use the multirobot_class_control_sample I came up with. 
+  </description>
+
+  <maintainer email="ahudso45@uncc.edu">ahudso45</maintainer>
+  <license>GPL-3.0</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rosconsole</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rosconsole</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_srvs</run_depend>
+
+</package>

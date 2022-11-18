@@ -1,0 +1,34 @@
+<launch>
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="bot_namespace" default="robot_0" />
+
+  <group ns = "$(arg bot_namespace)">
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+      <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+      <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
+      <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+      <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+      <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+      <param name="controller_frequency" value="10.0" />
+      
+      <param name="global_costmap/robot_base_frame" value="$(arg bot_namespace)/base_footprint"/>
+      
+      <param name="local_costmap/robot_base_frame" value="$(arg bot_namespace)/base_footprint"/>
+      <param name="local_costmap/global_frame" value="$(arg bot_namespace)/odom"/>
+
+
+      <!-- Custom -->
+      <param name="global_costmap/scan/sensor_frame" value="$(arg bot_namespace)/base_scan"/>
+      <param name="global_costmap/scan/topic" value="$(arg bot_namespace)/scan"/>
+      <param name="global_costmap/scan/observation_sources" value="$(arg bot_namespace)/scan"/>
+      
+      <param name="local_costmap/scan/sensor_frame" value="$(arg bot_namespace)/base_scan"/>
+      <param name="local_costmap/scan/topic" value="$(arg bot_namespace)/scan"/>
+      <param name="local_costmap/scan/observation_sources" value="$(arg bot_namespace)/scan"/>
+      <!-- <remap from="map" to="/map" /> -->
+    </node>
+  </group>
+</launch>
