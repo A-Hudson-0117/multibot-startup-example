@@ -9,7 +9,6 @@ import random
 
 # ---- Messages ---- #
 from geometry_msgs.msg import PoseStamped, Point
-from move_base_msgs.msg import MoveBaseActionResult
 
 
 
@@ -167,3 +166,4 @@ if __name__ == "__main__":
     rospy.loginfo("interrupting with return home")
     
     bot_example.return_home()
+    
